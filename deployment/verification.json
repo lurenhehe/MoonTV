@@ -1,0 +1,32 @@
+{
+  "verified_at": "2026-10-17T11:04:24.122277+08:00",
+  "domain": "https://dy.liyao03.dpdns.org",
+  "server": "91.213.186.133",
+  "official_commit": "6c0428d1ae7a8322efa8031909ec77cac22fd866",
+  "image": "ghcr.io/moontechlab/lunatv@sha256:78daa9360dd7ee13a264269b4de754923e56340efe4bab32978a1ff01dd9d1ee",
+  "checks": {
+    "internal_login": true,
+    "public_https_login": true,
+    "owner_permissions": true,
+    "anonymous_admin_blocked": true,
+    "configured_sources": 20,
+    "backup_rdb_validated": true,
+    "existing_service_states_unchanged": true
+  },
+  "sha256": {
+    "compose.yaml": "5465c1d5cbc6c1b032dde34702057e62106ab8881b09be291eba858d5b7be3a0",
+    "probe.py": "48bb158d7a5cd7cc29fce188c9a7bee176ebdbea29cd7b33a17c50c74fae84e1",
+    "update.sh": "044bad6ad8aa8f86c73a11f4958d867e86b266d66f333ee5533f93bf86e6d695",
+    "backup.sh": "716c18c5812b0ab00d65966c3a75b650bcb93924c64b2f5f33dfd28433244cc8",
+    "certificate.sh": "0bd47efe47f6e9fa78c09bd42724e82bae9f3588597bf1273f4de9fced33349e",
+    "nginx-https.conf": "564366e44bd93c9b11b7a17bf175ce9d8b243ec1bb26242506ab4d973e77c9cf"
+  },
+  "functional_smoke": {
+    "query": "西游记",
+    "search_results": 425,
+    "sources_returning_results": 11,
+    "detail_episodes": 10,
+    "elapsed_seconds": 4.5,
+    "video_playback": "not browser verified"
+  }
+}
