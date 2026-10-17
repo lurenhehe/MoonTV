@@ -24,7 +24,7 @@ jobs:
           git fetch --no-tags --depth=1 official main
           upstream_sha=$(git rev-parse FETCH_HEAD)
           # Keep local operations and workflow definitions; copy official app files exactly.
-          git restore --source=FETCH_HEAD --staged --worktree -- . ':!.github' ':!deployment'
+          git restore --source=FETCH_HEAD --staged --worktree -- . ':!.github' ':!deployment' ':!.gitattributes'
           printf '%s\n' "$upstream_sha" > deployment/UPSTREAM_COMMIT
           git add deployment/UPSTREAM_COMMIT
           # A real repository update every 28 days prevents GitHub's inactivity suspension.

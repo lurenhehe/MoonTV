@@ -6,7 +6,7 @@ mkdir -p backups
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 target="backups/$stamp"
 mkdir "$target"
-docker compose exec -T redis redis-cli --rdb /data/moontv-backup.rdb >/dev/null
+docker compose exec -T redis redis-cli --rdb /data/moontv-backup.rdb </dev/null >/dev/null
 cp data/redis/moontv-backup.rdb "$target/dump.rdb"
 rm data/redis/moontv-backup.rdb
 cp .env compose.yaml "$target/"
