@@ -33,4 +33,11 @@ docker compose up -d --no-deps --wait --wait-timeout 180 app
 python3 probe.py
 trap - ERR
 printf '%s image=%s revision=%s\n' "$(date -u +%FT%TZ)" "$new_image" "$revision" >> updates.log
+# Keep this app's current and previous images; never prune unrelated images.
+current_id=$(docker image inspect "$new_image" --format '{{.Id}}')
+previous_id=$(docker image inspect "$old_image" --format '{{.Id}}')
+while read -r image_id; do
+  [[ "$image_id" == "$current_id" || "$image_id" == "$previous_id" ]] && continue
+  docker image rm "$image_id" || echo "Retained referenced image: $image_id"
+done < <(docker image ls --no-trunc --quiet --filter label=org.opencontainers.image.source=https://github.com/MoonTechLab/LunaTV | sort -u)
 echo "Updated successfully: $revision"
