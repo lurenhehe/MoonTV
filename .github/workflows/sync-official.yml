@@ -1,0 +1,43 @@
+name: Sync official LunaTV source
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: official-source-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: vps
+          fetch-depth: 0
+      - name: Import the official application source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote add official https://github.com/MoonTechLab/LunaTV.git
+          git fetch --no-tags --depth=1 official main
+          upstream_sha=$(git rev-parse FETCH_HEAD)
+          # Keep local operations and workflow definitions; copy official app files exactly.
+          git restore --source=FETCH_HEAD --staged --worktree -- . ':!.github' ':!deployment'
+          printf '%s\n' "$upstream_sha" > deployment/UPSTREAM_COMMIT
+          git add deployment/UPSTREAM_COMMIT
+          # A real repository update every 28 days prevents GitHub's inactivity suspension.
+          last_commit=$(git log -1 --format=%ct)
+          if (( $(date +%s) - last_commit > 2419200 )); then
+            date -u +%FT%TZ > .github/sync-heartbeat.txt
+            git add .github/sync-heartbeat.txt
+          fi
+          if git diff --cached --quiet; then
+            echo "Official source already current: $upstream_sha"
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git -c core.hooksPath=/dev/null commit -m "chore: sync official LunaTV $upstream_sha"
+          git push origin HEAD:vps

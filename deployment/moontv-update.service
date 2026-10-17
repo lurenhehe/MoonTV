@@ -1,0 +1,13 @@
+[Unit]
+Description=Update MoonTV from the official LunaTV container image
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/moontv
+ExecStart=/opt/moontv/update.sh
+TimeoutStartSec=15min
+Nice=15
+IOSchedulingClass=idle

@@ -1,0 +1,11 @@
+[Unit]
+Description=Renew the MoonTV HTTPS certificate
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/moontv
+ExecStart=/opt/moontv/certificate.sh
+TimeoutStartSec=5min
+Nice=15

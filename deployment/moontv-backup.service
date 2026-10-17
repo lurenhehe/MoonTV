@@ -1,0 +1,11 @@
+[Unit]
+Description=Back up MoonTV persistent data
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/moontv
+ExecStart=/usr/bin/flock -w 60 /run/lock/moontv-update.lock /opt/moontv/backup.sh
+UMask=0077
+Nice=15

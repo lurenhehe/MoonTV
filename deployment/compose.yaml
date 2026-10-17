@@ -1,0 +1,47 @@
+name: moontv
+services:
+  redis:
+    image: redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    restart: unless-stopped
+    command: [redis-server, --appendonly, 'yes', --appendfsync, everysec, --save, '900 1', --maxmemory, 64mb, --maxmemory-policy, noeviction]
+    volumes:
+      - ./data/redis:/data
+    networks: [database]
+    mem_limit: 96m
+    cpus: '0.25'
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}
+  app:
+    image: ${MOONTV_IMAGE:?set MOONTV_IMAGE in .env}
+    restart: unless-stopped
+    ports: ['127.0.0.1:3000:3000']
+    env_file: .env
+    environment:
+      NODE_OPTIONS: --max-old-space-size=256
+      NEXT_PUBLIC_STORAGE_TYPE: redis
+      REDIS_URL: redis://redis:6379
+      SITE_BASE: https://dy.liyao03.dpdns.org
+      NEXT_PUBLIC_SITE_NAME: Moon影视
+    networks: [database, outbound]
+    depends_on:
+      redis: {condition: service_healthy}
+    mem_limit: 384m
+    cpus: '0.75'
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 4
+      start_period: 30s
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '2'}
+networks:
+  database: {internal: true}
+  outbound: {}
